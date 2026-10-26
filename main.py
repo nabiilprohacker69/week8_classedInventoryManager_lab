@@ -1,7 +1,8 @@
 import json
 import os
+import inventory
 from product import Product
-
+from inventory import Inventory
 
 def data_representation():
     print("==================================================")
@@ -54,7 +55,8 @@ def options():
     user_input = input("Enter Option: ")
 
     if user_input == "1":
-        option_1()
+        Inventory(inventory).__display_all__()
+        options()
     elif user_input == "2":
         option_2()
     elif user_input == "3":
@@ -66,20 +68,46 @@ def options():
     elif user_input == "6":
         print("Thank you for usingInventory Management System.\nProgram terminated.")
 
-def option_1():
-    with open("inventory.json", "r") as file:
-            inventory = json.load(file)
-            for product in inventory:
-                Product(product).__display_product_info__() ##Product(product) converts initial product dictionary into a Product object
 
 def option_2():
-    pass
+    print("Add New Product")
+    product_id = input("Product ID: ")
+    product_name = input("Product Name: ")
+    product_price = input("Price: ")
+    product_stock = int(input("Stock Quantity: "))
+    Inventory(inventory).__add_product__(product_id, product_name, product_price, product_stock)
+    options()
+    
 def option_3():
-    pass
+    print("Update Stock")
+    product_id = input("Enter Product ID: ")
+
+    product = Inventory(inventory).__search_product__(product_id)
+
+    if product is not None:
+        new_stock_quantity = input("New stock quantity: ")
+        Inventory(inventory).__update_product__(
+            new_stock_quantity, product_id
+        )
+
+    options()
+
 def option_4():
-    pass
+    print("Search Product")
+    product_id = input("Enter Product ID: ")
+    Inventory(inventory).__search_product__(product_id)
+    options()
+
 def option_5():
-    pass
+    print("Saving Inventory before exit...")
+    with open("inventory.json", "r") as file:
+        inventory = json.load(file)
+    
+    with open("inventory.json", "w") as file:
+        json.dump(inventory, file, indent=4)
+    
+    print("Inventory saved successfully.\n")
+    options()
 
 data_representation()
 options()
